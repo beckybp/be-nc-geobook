@@ -302,4 +302,74 @@ describe('bookModels', () => {
         })
       })
   })
+  describe.only('PATCH: /api/books/:id', () => {
+    test('201 returns updated book', () => {
+      return request(app)
+        .patch('/api/books/6425407dba5e321df2803b39')
+        .send({"title": "Minnie the Moocher 3",
+          "author": "Tyler Marks 3",
+          "genre": "March 3",
+          "posted_by": "Pam Howell 3"})
+        .expect(201)
+        .then(({ body: { book }}) => {
+          expect(book).toHaveProperty('title', 'Minnie the Moocher 3')
+          expect(book).toHaveProperty('author', 'Tyler Marks 3')
+          expect(book).toHaveProperty('genre', 'March 3')
+          expect(book).toHaveProperty('posted_by', 'Pam Howell 3')
+          expect(book).toHaveProperty('location', {
+            type: 'Point',
+            coordinates: [-1.6137, 53.8435]
+          })
+          expect(book).toHaveProperty(
+            'location_description',
+            "copying the program won't do anything, we need to index the mobile USB system!"
+          )
+        })
+    })
+    test('201 ignores new properties', () => {
+      return request(app)
+        .patch('/api/books/6425407dba5e321df2803b39')
+        .send({"title": "Minnie the Moocher 3",
+          "author": "Tyler Marks 3",
+          "genre": "March 3",
+          "posted_by": "Pam Howell 3",
+          "page_count": "20000"})
+        .expect(201)
+        .then(({ body: { book }}) => {
+          expect(book).toHaveProperty('title', 'Minnie the Moocher 3')
+          expect(book).toHaveProperty('author', 'Tyler Marks 3')
+          expect(book).toHaveProperty('genre', 'March 3')
+          expect(book).toHaveProperty('posted_by', 'Pam Howell 3')
+          expect(book).toHaveProperty('location', {
+            type: 'Point',
+            coordinates: [-1.6137, 53.8435]
+          })
+          expect(book).toHaveProperty(
+            'location_description',
+            "copying the program won't do anything, we need to index the mobile USB system!"
+          )
+          expect(book).not.toHaveProperty('page_count', '20000')
+        })
+    })
+    test('201 returns updated book when one property provided', () => {
+      return request(app)
+        .patch('/api/books/6425407dba5e321df2803b39')
+        .send({"title": "Minnie the Moocher 3"})
+        .expect(201)
+        .then(({ body: { book }}) => {
+          expect(book).toHaveProperty('title', 'Minnie the Moocher 3')
+          expect(book).toHaveProperty('author', 'Tyler Marks')
+          expect(book).toHaveProperty('genre', 'March')
+          expect(book).toHaveProperty('posted_by', 'Pam Howell')
+          expect(book).toHaveProperty('location', {
+            type: 'Point',
+            coordinates: [-1.6137, 53.8435]
+          })
+          expect(book).toHaveProperty(
+            'location_description',
+            "copying the program won't do anything, we need to index the mobile USB system!"
+          )
+        })
+    })
+  })
 })

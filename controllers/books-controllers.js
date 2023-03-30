@@ -37,3 +37,17 @@ export const postBook = async (req, res, next) => {
     next(error)
   }
 }
+
+export const patchBook = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const patchedBook = await bookModels
+        .findByIdAndUpdate(_id, req.body, {
+          new : true
+        })
+        .setOptions({ sanitizeFilter: true })
+      return res.status(201).send({book: patchedBook})
+  } catch (error) {
+    next(error)
+  }
+}
