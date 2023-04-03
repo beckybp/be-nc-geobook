@@ -46,7 +46,13 @@ export const patchBook = async (req, res, next) => {
           new : true
         })
         .setOptions({ sanitizeFilter: true })
-      return res.status(201).send({book: patchedBook})
+
+        if (!patchedBook) {
+          await Promise.reject({ status: 404, msg: "Book not found" });
+        } else {
+          return res.status(201).send({book: patchedBook})
+        }
+      
   } catch (error) {
     next(error)
   }

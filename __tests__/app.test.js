@@ -371,5 +371,24 @@ describe('bookModels', () => {
           )
         })
     })
+    test('404 non-existent book', () => {
+      return request(app)
+        .patch('/api/books/5425407dba5e321df2803b39')
+        .send({"title": "Minnie the Moocher 3"})
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe('Book not found')
+        })
+    })
+    test('400 invalid book id', () => {
+      return request(app)
+        .patch('/api/books/notABook')
+        .send({"title": "Minnie the Moocher 3"})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe('_id field should be a ObjectId')
+        })
+    })
   })
 })
+
